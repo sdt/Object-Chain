@@ -17,7 +17,7 @@ sub set {
     my ($self, $head, $key, $value) = @_;
 
     $self->_cache->{$key} = $value;
-    $self->inner->set($head, $key, $value); #TODO: be lazy
+    $self->tail->set($head, $key, $value); #TODO: be lazy
     return;
 }
 
@@ -25,7 +25,7 @@ sub get {
     my ($self, $head, $key) = @_;
 
     if (not exists $self->_cache->{$key}) {
-        $self->_cache->{$key} = $self->inner->get($head, $key);
+        $self->_cache->{$key} = $self->tail->get($head, $key);
     }
     return $self->_cache->{$key};
 

@@ -7,7 +7,7 @@ sub import {
     my ($class, $name, @methods) = @_;
     my $methods = join(' ', @methods);
 
-    eval <<"END";
+    my $code = <<"END";
 
 package ${name}::Role::Tail;
 use Moose::Role;
@@ -21,7 +21,7 @@ use namespace::autoclean;
 
 with '${name}::Role::Tail';
 
-has inner => (
+has tail => (
     is       => 'ro',
     does     => '${name}::Role::Tail',
     required => 1,
@@ -46,6 +46,9 @@ around [qw( $methods )] => sub {
 1;
 
 END
+
+    # print STDERR $code;
+    eval $code;
 }
 
 1;

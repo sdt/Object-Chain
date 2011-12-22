@@ -31,7 +31,7 @@ BEGIN {
 
     my $cache;
     lives_ok { $cache = KVStore::Body::HashCached->new(
-            inner => $tail) }
+            tail => $tail) }
         'Can create body HashCached object';
 
     test_tail_kvstore($tail, 'HashCached');
@@ -46,12 +46,12 @@ BEGIN {
 
     my $cache;
     lives_ok { $cache = KVStore::Body::HashCached->new(
-            inner => $tail) }
+            tail => $tail) }
         'Can create body HashCached object';
 
     my $check;
     lives_ok { $check = KVStore::Body::Check->new(
-            inner => $cache) }
+            tail => $cache) }
         'Can create body Check object';
 
     my $head;
