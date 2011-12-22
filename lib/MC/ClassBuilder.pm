@@ -3,6 +3,8 @@ package MC::ClassBuilder;
 use strict;
 use warnings;
 
+use Moose::Meta::Role;
+
 sub import {
     my ($class, $name, @methods) = @_;
 
@@ -13,17 +15,15 @@ sub import {
 
 sub _create_tail_role {
     my ($name, @methods) = @_;
-    my $methods = join(' ', @methods);
 
-    eval <<"END";
-package ${name}::Role::Tail;
-use Moose::Role;
-use namespace::autoclean;
+    # Effectively does this:
+    #   package ${name}::Role::Tail;
+    #   use Moose::Role;
+    #   requires @methods;
 
-requires qw( $methods );
-
-1;
-END
+    my $fullname = $name . '::Role::Tail';
+    my $role = Moose::Meta::Role->create($fullname);
+    $role->add_required_methods(@methods);
 }
 
 sub _create_body_role {
