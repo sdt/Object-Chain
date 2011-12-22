@@ -51,7 +51,7 @@ throws_ok { $body = Test::Body->new }
     qr/Attribute \(tail\) is required/, 'Body object requires tail parameter';
 throws_ok { $body = Test::Body->new(tail => [qw( something )]) }
     qr/Attribute \(tail\) does not pass the type constraint/,
-    'Body object requires tail parameter';
+    'Body object requires tail parameter to do Tail';
 lives_ok { $body = Test::Body->new(tail => $tail) }
     'Can create body object with tail';
 isa_ok($body, 'Test::Body');
@@ -93,6 +93,9 @@ is($head->two, 'Test::Body,Test::Head,Test::Body,Test::Head,Test::Tail,Test::Hea
 
 
 my $head2;
+throws_ok { $head2 = Test::Head->new(body => $head) }
+    qr/Attribute \(body\) does not pass the type constraint/,
+    'Head object requires body parameter to do Tail';
 lives_ok { $head2 = Test::Head->new(body => $tail) }
     'Can create head with tail as body';
 isa_ok($head2, 'Test::Head');
@@ -100,5 +103,9 @@ isa_ok($head2->body, 'Test::Tail');
 is($head2->body, $tail, 'Body is original tail');
 is($head2->one, 'Test::Tail::one', 'Test::Head::one works');
 is($head2->two, 'Test::Tail,Test::Head', 'Test::Head::two works');
+
+throws_ok { $head2->body($head) }
+    qr/Cannot assign a value to a read-only accessor/,
+    'Body accessor is ro';
 
 done_testing();
