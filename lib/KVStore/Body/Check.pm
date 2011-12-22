@@ -1,4 +1,4 @@
-package MC::Body::KVStore::Check;
+package KVStore::Body::Check;
 
 use Moose;
 use namespace::autoclean;
@@ -10,7 +10,7 @@ use KVStore;
 #    handles => 'get',
 #);
 
-with 'MC::Role::Body::KVStore';
+with 'KVStore::Role::Body';
 
 sub set {
     my ($self, $head, $key, $value) = @_;

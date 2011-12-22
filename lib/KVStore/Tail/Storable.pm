@@ -1,10 +1,10 @@
-package MC::Tail::KVStore::Storable;
+package KVStore::Tail::Storable;
 
 use Moose;
 use namespace::autoclean;
 
 use KVStore;
-with 'MC::Role::Tail::KVStore';
+with 'KVStore::Role::Tail';
 
 use Storable qw( store retrieve );
 
@@ -32,7 +32,6 @@ sub get {
 sub _load_db {
     my ($self) = @_;
     return eval { retrieve($self->filename) } // {};
-    #return -f $self->filename ? retrieve($self->filename) : {};
 }
 
 __PACKAGE__->meta->make_immutable;

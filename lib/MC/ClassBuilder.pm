@@ -9,31 +9,31 @@ sub import {
 
     eval <<"END";
 
-package MC::Role::Tail::$name;
+package ${name}::Role::Tail;
 use Moose::Role;
 use namespace::autoclean;
 
 requires qw( $methods );
 
-package MC::Role::Body::$name;
+package ${name}::Role::Body;
 use Moose::Role;
 use namespace::autoclean;
 
-with 'MC::Role::Tail::$name';
+with '${name}::Role::Tail';
 
 has inner => (
     is       => 'ro',
-    does     => 'MC::Role::Tail::$name',
+    does     => '${name}::Role::Tail',
     required => 1,
 );
 
-package MC::Head::$name;
+package ${name}::Head;
 use Moose;
 use namespace::autoclean;
 
 has body => (
     is          => 'ro',
-    does        => 'MC::Role::Tail::$name',
+    does        => '${name}::Role::Tail',
     required    => 1,
     handles     => [qw( $methods )],
 );

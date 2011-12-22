@@ -7,15 +7,15 @@ use File::Temp ();
 use Test::Most;
 
 BEGIN {
-    use_ok 'MC::Tail::KVStore::Storable';
-    use_ok 'MC::Body::KVStore::HashCached';
-    use_ok 'MC::Body::KVStore::Check';
+    use_ok 'KVStore::Tail::Storable';
+    use_ok 'KVStore::Body::HashCached';
+    use_ok 'KVStore::Body::Check';
 };
 
 {
     my $dbfile = File::Temp->new();
     my $tail;
-    lives_ok { $tail = MC::Tail::KVStore::Storable->new(
+    lives_ok { $tail = KVStore::Tail::Storable->new(
             filename => $dbfile->filename ) }
         'Can create tail Storable object';
 
@@ -25,12 +25,12 @@ BEGIN {
 {
     my $dbfile = File::Temp->new();
     my $tail;
-    lives_ok { $tail = MC::Tail::KVStore::Storable->new(
+    lives_ok { $tail = KVStore::Tail::Storable->new(
             filename => $dbfile->filename ) }
         'Can create tail Storable object';
 
     my $cache;
-    lives_ok { $cache = MC::Body::KVStore::HashCached->new(
+    lives_ok { $cache = KVStore::Body::HashCached->new(
             inner => $tail) }
         'Can create body HashCached object';
 
@@ -40,22 +40,22 @@ BEGIN {
 {
     my $dbfile = File::Temp->new();
     my $tail;
-    lives_ok { $tail = MC::Tail::KVStore::Storable->new(
+    lives_ok { $tail = KVStore::Tail::Storable->new(
             filename => $dbfile->filename ) }
         'Can create tail Storable object';
 
     my $cache;
-    lives_ok { $cache = MC::Body::KVStore::HashCached->new(
+    lives_ok { $cache = KVStore::Body::HashCached->new(
             inner => $tail) }
         'Can create body HashCached object';
 
     my $check;
-    lives_ok { $check = MC::Body::KVStore::Check->new(
+    lives_ok { $check = KVStore::Body::Check->new(
             inner => $cache) }
         'Can create body Check object';
 
     my $head;
-    lives_ok { $head = MC::Head::KVStore->new(
+    lives_ok { $head = KVStore::Head->new(
             body => $check) }
         'Can create head object';
 

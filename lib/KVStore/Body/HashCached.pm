@@ -1,10 +1,10 @@
-package MC::Body::KVStore::HashCached;
+package KVStore::Body::HashCached;
 
 use Moose;
 use namespace::autoclean;
 
 use KVStore;
-with 'MC::Role::Body::KVStore';
+with 'KVStore::Role::Body';
 
 has _cache => (
     is => 'ro',
