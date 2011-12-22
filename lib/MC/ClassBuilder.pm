@@ -5,6 +5,8 @@ use warnings;
 
 use Moose::Meta::Role;
 
+my %role; #TODO: get rid of this once all the evals are gone
+
 sub import {
     my ($class, $name, @methods) = @_;
 
@@ -24,25 +26,36 @@ sub _create_tail_role {
     my $fullname = $name . '::Role::Tail';
     my $role = Moose::Meta::Role->create($fullname);
     $role->add_required_methods(@methods);
+
+    $role{$fullname} = $role;
 }
 
 sub _create_body_role {
     my ($name, @methods) = @_;
 
-    eval <<"END";
-package ${name}::Role::Body;
-use Moose::Role;
-use namespace::autoclean;
+    # Effectively does this:
+    #   package ${name}::Role::Body;
+    #   use Moose::Role;
+    #   with '${name}::Role::Tail';
+    #   has tail => (
+    #       is       => 'ro',
+    #       does     => '${name}::Role::Tail',
+    #       required => 1,
+    #   );
 
-with '${name}::Role::Tail';
+    my $bodyname = $name . '::Role::Body';
+    my $tailname = $name . '::Role::Tail';
 
-has tail => (
-    is       => 'ro',
-    does     => '${name}::Role::Tail',
-    required => 1,
-);
-1;
-END
+    my $role = Moose::Meta::Role->create($bodyname);
+    $role->add_role($role{$tailname});
+    $role->add_required_methods(@methods); #TODO: should this be necessary?
+    $role->add_attribute('tail',
+            is => 'ro',
+            does => $tailname,
+            required => 1,
+        );
+
+    $role{$bodyname} = $role;
 }
 
 sub _create_head_class {
