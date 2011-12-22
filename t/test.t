@@ -7,10 +7,6 @@ use File::Temp ();
 use Test::Most;
 
 BEGIN {
-    use_ok 'MC::ClassBuilder';
-
-    MC::ClassBuilder::build(KVStore => qw( get set ));
-
     use_ok 'MC::Tail::KVStore::Storable';
     use_ok 'MC::Body::KVStore::HashCached';
     use_ok 'MC::Body::KVStore::Check';

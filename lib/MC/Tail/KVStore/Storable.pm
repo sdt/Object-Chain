@@ -3,6 +3,7 @@ package MC::Tail::KVStore::Storable;
 use Moose;
 use namespace::autoclean;
 
+use KVStore;
 with 'MC::Role::Tail::KVStore';
 
 use Storable qw( store retrieve );

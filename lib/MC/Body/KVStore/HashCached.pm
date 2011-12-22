@@ -3,6 +3,7 @@ package MC::Body::KVStore::HashCached;
 use Moose;
 use namespace::autoclean;
 
+use KVStore;
 with 'MC::Role::Body::KVStore';
 
 has _cache => (

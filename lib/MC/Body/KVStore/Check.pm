@@ -3,6 +3,7 @@ package MC::Body::KVStore::Check;
 use Moose;
 use namespace::autoclean;
 
+use KVStore;
 
 # Can't do this(?) - chicken and egg problem
 #has +inner => (
