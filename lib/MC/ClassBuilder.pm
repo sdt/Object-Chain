@@ -3,8 +3,8 @@ package MC::ClassBuilder;
 use strict;
 use warnings;
 
-sub build {
-    my ($name, @methods) = @_;
+sub import {
+    my ($class, $name, @methods) = @_;
     my $methods = join(' ', @methods);
 
     eval <<"END";

@@ -1,7 +1,5 @@
 package KVStore;
 
-use MC::ClassBuilder;
-
-BEGIN { MC::ClassBuilder::build(KVStore => qw( get set )) };
+use MC::ClassBuilder KVStore => qw( get set );
 
 1;
