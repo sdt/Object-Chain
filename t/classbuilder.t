@@ -49,6 +49,9 @@ lives_ok {
 my $body;
 throws_ok { $body = Test::Body->new }
     qr/Attribute \(tail\) is required/, 'Body object requires tail parameter';
+throws_ok { $body = Test::Body->new(tail => [qw( something )]) }
+    qr/Attribute \(tail\) does not pass the type constraint/,
+    'Body object requires tail parameter';
 lives_ok { $body = Test::Body->new(tail => $tail) }
     'Can create body object with tail';
 isa_ok($body, 'Test::Body');
@@ -69,6 +72,9 @@ is($body2->tail->tail, $tail, 'Second tail is original tail');
 is($body2->one($body), 'Test::Body::one', 'Nested Test::Body::one works');
 is($body2->two($body), 'Test::Body,Test::Body,Test::Body,Test::Body,Test::Tail,Test::Body',
     'Nested Test::Body::two works');
+throws_ok { $body2->tail($tail) }
+    qr/Cannot assign a value to a read-only accessor/,
+    'Tail accessor is ro';
 
 my $head;
 throws_ok { $head = Test::Head->new }
