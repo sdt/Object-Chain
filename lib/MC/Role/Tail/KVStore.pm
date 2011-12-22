@@ -1,4 +1,4 @@
-package MC::Role::Base::KVStore;
+package MC::Role::Tail::KVStore;
 
 use Moose::Role;
 use namespace::autoclean;

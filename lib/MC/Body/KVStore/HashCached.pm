@@ -1,9 +1,9 @@
-package MC::Mutator::KVStore::HashCached;
+package MC::Body::KVStore::HashCached;
 
 use Moose;
 use namespace::autoclean;
 
-with 'MC::Role::Mutator::KVStore';
+with 'MC::Role::Body::KVStore';
 
 has _cache => (
     is => 'ro',

@@ -1,9 +1,9 @@
-package MC::Base::KVStore::Storable;
+package MC::Tail::KVStore::Storable;
 
 use Moose;
 use namespace::autoclean;
 
-with 'MC::Role::Base::KVStore';
+with 'MC::Role::Tail::KVStore';
 
 use Storable qw( store retrieve );
 

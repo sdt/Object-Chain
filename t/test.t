@@ -7,51 +7,57 @@ use File::Temp ();
 use Test::Most;
 
 BEGIN {
-    use_ok 'MC::Base::KVStore::Storable';
-    use_ok 'MC::Mutator::KVStore::HashCached';
+    use_ok 'MC::Tail::KVStore::Storable';
+    use_ok 'MC::Body::KVStore::HashCached';
+    use_ok 'MC::Body::KVStore::Check';
     use_ok 'MC::Head::KVStore';
 };
 
 {
     my $dbfile = File::Temp->new();
-    my $base;
-    lives_ok { $base = MC::Base::KVStore::Storable->new(
+    my $tail;
+    lives_ok { $tail = MC::Tail::KVStore::Storable->new(
             filename => $dbfile->filename ) }
-        'Can create base Storable object';
+        'Can create tail Storable object';
 
-    test_tail_kvstore($base, 'Storable');
+    test_tail_kvstore($tail, 'Storable');
 }
 
 {
     my $dbfile = File::Temp->new();
-    my $base;
-    lives_ok { $base = MC::Base::KVStore::Storable->new(
+    my $tail;
+    lives_ok { $tail = MC::Tail::KVStore::Storable->new(
             filename => $dbfile->filename ) }
-        'Can create base Storable object';
+        'Can create tail Storable object';
 
     my $cache;
-    lives_ok { $cache = MC::Mutator::KVStore::HashCached->new(
-            inner => $base) }
-        'Can create mutator HashCached object';
+    lives_ok { $cache = MC::Body::KVStore::HashCached->new(
+            inner => $tail) }
+        'Can create body HashCached object';
 
-    test_tail_kvstore($base, 'HashCached');
+    test_tail_kvstore($tail, 'HashCached');
 }
 
 {
     my $dbfile = File::Temp->new();
-    my $base;
-    lives_ok { $base = MC::Base::KVStore::Storable->new(
+    my $tail;
+    lives_ok { $tail = MC::Tail::KVStore::Storable->new(
             filename => $dbfile->filename ) }
-        'Can create base Storable object';
+        'Can create tail Storable object';
 
     my $cache;
-    lives_ok { $cache = MC::Mutator::KVStore::HashCached->new(
-            inner => $base) }
-        'Can create mutator HashCached object';
+    lives_ok { $cache = MC::Body::KVStore::HashCached->new(
+            inner => $tail) }
+        'Can create body HashCached object';
+
+    my $check;
+    lives_ok { $check = MC::Body::KVStore::Check->new(
+            inner => $cache) }
+        'Can create body Check object';
 
     my $head;
     lives_ok { $head = MC::Head::KVStore->new(
-            body => $cache) }
+            body => $check) }
         'Can create head object';
 
     test_head_kvstore($head, 'Head');

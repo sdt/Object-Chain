@@ -1,13 +1,13 @@
-package MC::Role::Mutator::KVStore;
+package MC::Role::Body::KVStore;
 
 use Moose::Role;
 use namespace::autoclean;
 
-with 'MC::Role::Base::KVStore'; # must implement get & set
+with 'MC::Role::Tail::KVStore'; # must implement get & set
 
 has inner => (                  # must provide an inner object to new
     is       => 'ro',
-    does     => 'MC::Role::Base::KVStore',
+    does     => 'MC::Role::Tail::KVStore',
     required => 1,
 );
 

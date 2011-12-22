@@ -5,7 +5,7 @@ use namespace::autoclean;
 
 has body => (
     is          => 'ro',
-    does        => 'MC::Role::Base::KVStore',
+    does        => 'MC::Role::Tail::KVStore',
     required    => 1,
     handles     => [qw( get set )],
 );

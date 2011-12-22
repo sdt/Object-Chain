@@ -27,7 +27,7 @@ sub compose {
 sub _create_base {
     my ($inner, $base_class, $name, $args) = @_;
 
-    my $class_name = "MC::Base::${base_class}::${name}";
+    my $class_name = "MC::Tail::${base_class}::${name}";
     load_class($class_name);
 
     return $class_name->new(%$args);
