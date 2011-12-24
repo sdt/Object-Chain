@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 
+use lib './examples/lib';
 use File::Temp ();
 use Test::Most;
 
