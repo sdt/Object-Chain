@@ -115,8 +115,12 @@ sub _create_head_class {
     my $headname = $name . '::Head';
     my $tailname = $name . '::Role::Tail';
 
-    my $class;
-    $class = Moose::Meta::Class->create($headname,
+    my $method_wrapper = sub {
+            my ($orig, $self, @args) = @_;
+            $self->$orig($self, @args); # 2nd $self is $head param
+        };
+
+    my $class = Moose::Meta::Class->create($headname,
             attributes => [
                 Moose::Meta::Attribute->new(
                     body => (
@@ -130,10 +134,7 @@ sub _create_head_class {
             superclasses => [qw( Moose::Object )],
         );
     for my $method (@methods) {
-        $class->add_around_method_modifier($method, sub {
-                my ($orig, $self, @args) = @_;
-                $self->$orig($self, @args);
-            });
+        $class->add_around_method_modifier($method, $method_wrapper);
     }
     $class->make_immutable;
 }
