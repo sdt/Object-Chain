@@ -4,6 +4,18 @@ use Test::Most;
 
 BEGIN { use_ok('MC::ClassBuilder', Test => qw( one two )) }
 
+throws_ok { MC::ClassBuilder->import() }
+    qr/name parameter is required/,
+    'ClassBuilder requires name parameter';
+
+throws_ok { MC::ClassBuilder->import(q(Bad'Name)) }
+    qr/"Bad'Name" is not a valid module prefix/,
+    'ClassBuilder requires name parameter to be a valid module name';
+
+throws_ok { MC::ClassBuilder->import('Good::Name') }
+    qr/At least one method name must be specified/,
+    'ClassBuilder requires at least one method in the interface';
+
 throws_ok {
         package Test::Tail::Fail;
         use Moose;

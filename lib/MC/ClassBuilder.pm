@@ -6,7 +6,9 @@ use warnings;
 # VERSION
 # ABSTRACT: Automatically create Head class, and Body and Tail roles.
 
-use Moose ();
+use Carp                qw( croak );
+use Moose               qw( );
+use MooseX::Types::Perl qw( ModuleName );
 
 my $head_method_wrapper = sub {
     my ($orig, $self, @args) = @_;
@@ -15,6 +17,13 @@ my $head_method_wrapper = sub {
 
 sub import {
     my ($class, $name, @methods) = @_;
+
+    croak('name parameter is required')
+        unless defined $name;
+    croak(qq("$name" is not a valid module prefix))
+        unless ModuleName->check($name);
+    croak('At least one method name must be specified')
+        unless @methods;
 
     my $ifname = $name . '::Role::Interface';
     my $ifrole = Moose::Meta::Role->create($ifname);
