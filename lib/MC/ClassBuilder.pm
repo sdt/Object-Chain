@@ -1,8 +1,10 @@
 package MC::ClassBuilder;
-# ABSTRACT: Automatically create Head class, and Body and Tail roles.
 
 use strict;
 use warnings;
+
+# VERSION
+# ABSTRACT: Automatically create Head class, and Body and Tail roles.
 
 use Moose ();
 
