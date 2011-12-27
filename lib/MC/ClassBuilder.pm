@@ -16,17 +16,22 @@ my $head_method_wrapper = sub {
 sub import {
     my ($class, $name, @methods) = @_;
 
+    my $ifname = $name . '::Role::Interface';
+    my $ifrole = Moose::Meta::Role->create($ifname);
+    $ifrole->add_required_methods(@methods);
+
     my $tailname = $name . '::Role::Tail';
-    my $tailrole = Moose::Meta::Role->create($tailname);
-    $tailrole->add_required_methods(@methods);
+    my $tailrole = Moose::Meta::Role->create($tailname,
+            roles => [ $ifname ],
+        );
 
     my $bodyname = $name . '::Role::Body';
     my $bodyrole = Moose::Meta::Role->create($bodyname,
-            roles => [ $tailname ],
+            roles => [ $ifname ],
             attributes => {
                 tail => {
                     is => 'ro',
-                    does => $tailname,
+                    does => $ifname,
                     required => 1,
                 },
             },
@@ -38,13 +43,14 @@ sub import {
                 Moose::Meta::Attribute->new(
                     body => (
                         is          => 'ro',
-                        does        => $tailname,
+                        does        => $ifname,
                         required    => 1,
                         handles     => \@methods,
                     ),
                 ),
             ],
             superclasses => [qw( Moose::Object )],
+            xaround => { this => 'hats' },
         );
     for my $method (@methods) {
         $headclass->add_around_method_modifier($method, $head_method_wrapper);
@@ -65,19 +71,24 @@ __END__
 
     # Will automatically create the following roles and classes:
 
+    # Interface role - this specifies the interface for the centipede.
+    package MyCentipede::Role::Interface;
+    use Moose::Role;
+    requires qw( get set );
+
     # Tail role - consuming classes must implement the interface.
     package MyCentipede::Role::Tail;
     use Moose::Role;
-    requires qw( get set );
+    with 'MyCentipede::Role::Interface';
 
     # Body role - consuming classes must implement the interface, and also
     # have a tail attribute.
     package MyCentipede::Role::Body;
     use Moose::Role;
-    with 'MyCentipede::Role::Tail';
+    with 'MyCentipede::Role::Interface';
     has tail => (
         is       => 'ro',
-        does     => 'MyCentipede::Role::Tail',
+        does     => 'MyCentipede::Role::Interface',
         required => 1,
     );
 
@@ -87,7 +98,7 @@ __END__
     use Moose;
     has body => (
         is          => 'ro',
-        does        => 'MyCentipede::Role::Tail',
+        does        => 'MyCentipede::Role::Interface',
         required    => 1,
         handles     => [qw( get set )],
     );
