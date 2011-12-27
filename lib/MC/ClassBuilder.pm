@@ -4,12 +4,7 @@ package MC::ClassBuilder;
 use strict;
 use warnings;
 
-use Moose::Meta::Instance;      # required for Moose::Meta::Attribute ?
-use Moose::Meta::TypeCoercion;  # required for Moose::Meta::Attribute ?
-
-use Moose::Meta::Attribute;
-use Moose::Meta::Class;
-use Moose::Meta::Role;
+use Moose ();
 
 my %role; #TODO: get rid of this once all the evals are gone
 
