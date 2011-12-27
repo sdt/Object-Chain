@@ -31,37 +31,6 @@ sub _create_tail_role {
     $role{$tailname} = $role;
 }
 
-sub _create_body_roleX {
-    my ($name, @methods) = @_;
-
-    # Effectively does this:
-    #   package ${name}::Role::Body;
-    #   use Moose::Role;
-    #   with '${name}::Role::Tail';
-    #   has tail => (
-    #       is       => 'ro',
-    #       does     => '${name}::Role::Tail',
-    #       required => 1,
-    #   );
-
-    my $bodyname = $name . '::Role::Body';
-    my $tailname = $name . '::Role::Tail';
-
-    my $role = Moose::Meta::Role->create($bodyname,
-#            roles => [ $tailname ],    # not working?
-            attributes => {
-                tail => {
-                    is => 'ro',
-                    does => $tailname,
-                    required => 1,
-                },
-            },
-        );
-    $role->add_role($role{$tailname});
-
-    $role{$bodyname} = $role;
-}
-
 sub _create_body_role {
     my ($name, @methods) = @_;
 
@@ -78,13 +47,15 @@ sub _create_body_role {
     my $bodyname = $name . '::Role::Body';
     my $tailname = $name . '::Role::Tail';
 
-    my $role = Moose::Meta::Role->create($bodyname);
-    $role->add_role($role{$tailname});
-    $role->add_required_methods(@methods); #TODO: should this be necessary?
-    $role->add_attribute('tail',
-            is => 'ro',
-            does => $tailname,
-            required => 1,
+    my $role = Moose::Meta::Role->create($bodyname,
+            roles => [ $tailname ],
+            attributes => {
+                tail => {
+                    is => 'ro',
+                    does => $tailname,
+                    required => 1,
+                },
+            },
         );
 
     $role{$bodyname} = $role;
