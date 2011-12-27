@@ -6,8 +6,6 @@ use warnings;
 
 use Moose ();
 
-my %role; #TODO: get rid of this once all the evals are gone
-
 sub import {
     my ($class, $name, @methods) = @_;
 
@@ -27,8 +25,6 @@ sub _create_tail_role {
     my $tailname = $name . '::Role::Tail';
     my $role = Moose::Meta::Role->create($tailname);
     $role->add_required_methods(@methods);
-
-    $role{$tailname} = $role;
 }
 
 sub _create_body_role {
@@ -57,8 +53,6 @@ sub _create_body_role {
                 },
             },
         );
-
-    $role{$bodyname} = $role;
 }
 
 sub _create_head_class {
