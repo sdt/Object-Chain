@@ -12,23 +12,7 @@ use KVStore;
     #handles => 'get',
 #);
 
-{
-    package MC::Util;
-
-    # This is a workaround for has '+tail' => ( handles =>  ... );
-    sub tail_handles {
-        my $class = shift;
-        my $caller = scalar caller;
-        for my $method_name (@_) {
-            $caller->meta->add_method($method_name, sub {
-                    my $self = shift;
-                    return $self->tail->$method_name(@_);
-                });
-        }
-    }
-}
-
-MC::Util->tail_handles qw( get );
+use MC::Body::AutoDelegate qw( get );
 
 with 'KVStore::Role::Body';
 
