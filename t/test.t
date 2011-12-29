@@ -10,6 +10,7 @@ use Test::Most;
 BEGIN {
     use_ok 'KVStore::Tail::Storable';
     use_ok 'KVStore::Body::HashCached';
+    use_ok 'KVStore::Body::Compress';
     use_ok 'KVStore::Body::Check';
 };
 
@@ -50,6 +51,11 @@ BEGIN {
             tail => $tail) }
         'Can create body HashCached object';
 
+    my $compress;
+    lives_ok { $compress = KVStore::Body::Compress->new(
+            tail => $tail) }
+        'Can create body Compress object';
+
     my $check;
     lives_ok { $check = KVStore::Body::Check->new(
             tail => $cache) }
@@ -59,6 +65,8 @@ BEGIN {
     lives_ok { $head = KVStore::Head->new(
             body => $check) }
         'Can create head object';
+
+    explain($head);
 
     test_head_kvstore($head, 'Head');
 }
