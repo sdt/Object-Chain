@@ -2,32 +2,32 @@
 
 use Test::Most;
 
-BEGIN { use_ok('MC::ClassBuilder', MCTest => qw( one two )) }
+BEGIN { use_ok('Object::Chain::ClassBuilder', OCTest => qw( one two )) }
 
-throws_ok { MC::ClassBuilder->import() }
+throws_ok { Object::Chain::ClassBuilder->import() }
     qr/name parameter is required/,
     'ClassBuilder requires name parameter';
 
-throws_ok { MC::ClassBuilder->import(q(Bad'Name)) }
+throws_ok { Object::Chain::ClassBuilder->import(q(Bad'Name)) }
     qr/"Bad'Name" is not a valid module prefix/,
     'ClassBuilder requires name parameter to be a valid module name';
 
-throws_ok { MC::ClassBuilder->import('Good::Name') }
+throws_ok { Object::Chain::ClassBuilder->import('Good::Name') }
     qr/At least one method name must be specified/,
     'ClassBuilder requires at least one method in the interface';
 
 throws_ok {
-        package MCTest::Tail::Fail;
+        package OCTest::Tail::Fail;
         use Moose;
-        with 'MCTest::Role::Tail';
-    } qr/'MCTest::Role::Tail' requires the methods 'one' and 'two'/,
+        with 'OCTest::Role::Tail';
+    } qr/'OCTest::Role::Tail' requires the methods 'one' and 'two'/,
     'Tail role exists and requires the interface';
 
 lives_ok {
-    package MCTest::Tail;
+    package OCTest::Tail;
     use Moose;
-    with 'MCTest::Role::Tail';
-    sub one { 'MCTest::Tail::one' }
+    with 'OCTest::Role::Tail';
+    sub one { 'OCTest::Tail::one' }
     sub two {
         my ($self, $head) = @_;
         __PACKAGE__ . ',' . ref $head;
@@ -35,23 +35,23 @@ lives_ok {
 } 'Can consume tail role';
 
 my $tail;
-lives_ok { $tail = MCTest::Tail->new } 'Can create tail object';
-isa_ok($tail, 'MCTest::Tail');
-is($tail->one($tail), 'MCTest::Tail::one', 'MCTest::Tail::one works');
-is($tail->two($tail), 'MCTest::Tail,MCTest::Tail', 'MCTest::Tail::two works');
+lives_ok { $tail = OCTest::Tail->new } 'Can create tail object';
+isa_ok($tail, 'OCTest::Tail');
+is($tail->one($tail), 'OCTest::Tail::one', 'OCTest::Tail::one works');
+is($tail->two($tail), 'OCTest::Tail,OCTest::Tail', 'OCTest::Tail::two works');
 
 throws_ok {
-        package MCTest::Body::Fail;
+        package OCTest::Body::Fail;
         use Moose;
-        with 'MCTest::Role::Body';
-    } qr/'MCTest::Role::Body' requires the methods 'one' and 'two'/,
+        with 'OCTest::Role::Body';
+    } qr/'OCTest::Role::Body' requires the methods 'one' and 'two'/,
     'Body role exists and requires the interface';
 
 lives_ok {
-    package MCTest::Body;
+    package OCTest::Body;
     use Moose;
-    with 'MCTest::Role::Body';
-    sub one { 'MCTest::Body::one' }
+    with 'OCTest::Role::Body';
+    sub one { 'OCTest::Body::one' }
     sub two {
         my ($self, $head) = @_;
         join(',', __PACKAGE__, ref($head), $self->tail->two($head));
@@ -59,62 +59,62 @@ lives_ok {
 } 'Can consume body role';
 
 my $body;
-throws_ok { $body = MCTest::Body->new }
+throws_ok { $body = OCTest::Body->new }
     qr/Attribute \(tail\) is required/, 'Body object requires tail parameter';
-throws_ok { $body = MCTest::Body->new(tail => [qw( something )]) }
+throws_ok { $body = OCTest::Body->new(tail => [qw( something )]) }
     qr/Attribute \(tail\) does not pass the type constraint/,
     'Body object requires tail parameter to do Tail';
-lives_ok { $body = MCTest::Body->new(tail => $tail) }
+lives_ok { $body = OCTest::Body->new(tail => $tail) }
     'Can create body object with tail';
-isa_ok($body, 'MCTest::Body');
-isa_ok($body->tail, 'MCTest::Tail');
+isa_ok($body, 'OCTest::Body');
+isa_ok($body->tail, 'OCTest::Tail');
 is($body->tail, $tail, 'Tail is original tail');
-is($body->one($body), 'MCTest::Body::one', 'MCTest::Body::one works');
-is($body->two($body), 'MCTest::Body,MCTest::Body,MCTest::Tail,MCTest::Body',
-    'MCTest::Body::two works');
+is($body->one($body), 'OCTest::Body::one', 'OCTest::Body::one works');
+is($body->two($body), 'OCTest::Body,OCTest::Body,OCTest::Tail,OCTest::Body',
+    'OCTest::Body::two works');
 
 my $body2;
-lives_ok { $body2 = MCTest::Body->new(tail => $body) }
+lives_ok { $body2 = OCTest::Body->new(tail => $body) }
     'Can create another body object with body as tail';
-isa_ok($body2, 'MCTest::Body');
-isa_ok($body2->tail, 'MCTest::Body');
+isa_ok($body2, 'OCTest::Body');
+isa_ok($body2->tail, 'OCTest::Body');
 is($body2->tail, $body, 'First tail is original body');
-isa_ok($body2->tail->tail, 'MCTest::Tail');
+isa_ok($body2->tail->tail, 'OCTest::Tail');
 is($body2->tail->tail, $tail, 'Second tail is original tail');
-is($body2->one($body), 'MCTest::Body::one', 'Nested MCTest::Body::one works');
-is($body2->two($body), 'MCTest::Body,MCTest::Body,MCTest::Body,MCTest::Body,MCTest::Tail,MCTest::Body',
-    'Nested MCTest::Body::two works');
+is($body2->one($body), 'OCTest::Body::one', 'Nested OCTest::Body::one works');
+is($body2->two($body), 'OCTest::Body,OCTest::Body,OCTest::Body,OCTest::Body,OCTest::Tail,OCTest::Body',
+    'Nested OCTest::Body::two works');
 throws_ok { $body2->tail($tail) }
     qr/Cannot assign a value to a read-only accessor/,
     'Tail accessor is ro';
 
 my $head;
-throws_ok { $head = MCTest::Head->new }
+throws_ok { $head = OCTest::Head->new }
     qr/Attribute \(body\) is required/, 'Head object requires body parameter';
-lives_ok { $head = MCTest::Head->new(body => $body2) }
+lives_ok { $head = OCTest::Head->new(body => $body2) }
     'Can create head with top-level body';
-isa_ok($head, 'MCTest::Head');
-isa_ok($head->body, 'MCTest::Body');
+isa_ok($head, 'OCTest::Head');
+isa_ok($head->body, 'OCTest::Body');
 is($head->body, $body2, 'First body part is top-level body');
-isa_ok($head->body->tail, 'MCTest::Body');
+isa_ok($head->body->tail, 'OCTest::Body');
 is($head->body->tail, $body, 'Second body part is second body');
-isa_ok($head->body->tail->tail, 'MCTest::Tail');
+isa_ok($head->body->tail->tail, 'OCTest::Tail');
 is($head->body->tail->tail, $tail, 'Third body part is original tail');
-is($head->one, 'MCTest::Body::one', 'Head method one works');
-is($head->two, 'MCTest::Body,MCTest::Head,MCTest::Body,MCTest::Head,MCTest::Tail,MCTest::Head', 'Head method two works');
+is($head->one, 'OCTest::Body::one', 'Head method one works');
+is($head->two, 'OCTest::Body,OCTest::Head,OCTest::Body,OCTest::Head,OCTest::Tail,OCTest::Head', 'Head method two works');
 
 
 my $head2;
-throws_ok { $head2 = MCTest::Head->new(body => $head) }
+throws_ok { $head2 = OCTest::Head->new(body => $head) }
     qr/Attribute \(body\) does not pass the type constraint/,
     'Head object requires body parameter to do Tail';
-lives_ok { $head2 = MCTest::Head->new(body => $tail) }
+lives_ok { $head2 = OCTest::Head->new(body => $tail) }
     'Can create head with tail as body';
-isa_ok($head2, 'MCTest::Head');
-isa_ok($head2->body, 'MCTest::Tail');
+isa_ok($head2, 'OCTest::Head');
+isa_ok($head2->body, 'OCTest::Tail');
 is($head2->body, $tail, 'Body is original tail');
-is($head2->one, 'MCTest::Tail::one', 'MCTest::Head::one works');
-is($head2->two, 'MCTest::Tail,MCTest::Head', 'MCTest::Head::two works');
+is($head2->one, 'OCTest::Tail::one', 'OCTest::Head::one works');
+is($head2->two, 'OCTest::Tail,OCTest::Head', 'OCTest::Head::two works');
 
 throws_ok { $head2->body($head) }
     qr/Cannot assign a value to a read-only accessor/,

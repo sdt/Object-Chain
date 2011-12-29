@@ -12,7 +12,7 @@ use KVStore;
     #handles => 'get',
 #);
 
-use MC::Body::AutoDelegate qw( get );
+use Object::Chain::Body::AutoDelegate qw( get );
 
 with 'KVStore::Role::Body';
 

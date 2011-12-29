@@ -1,4 +1,4 @@
-package MC::ClassBuilder;
+package Object::Chain::ClassBuilder;
 
 use strict;
 use warnings;
@@ -75,39 +75,39 @@ __END__
 
 =head1 SYNOPSIS
 
-    package MyCentipede;
-    use MC::ClassBuilder MyCentipede => qw( get set );
+    package MyChain;
+    use Object::Chain::ClassBuilder MyChain => qw( get set );
 
     # Will automatically create the following roles and classes:
 
-    # Interface role - this specifies the interface for the centipede.
-    package MyCentipede::Role::Interface;
+    # Interface role - this specifies the interface for the chain.
+    package MyChain::Role::Interface;
     use Moose::Role;
     requires qw( get set );
 
     # Tail role - consuming classes must implement the interface.
-    package MyCentipede::Role::Tail;
+    package MyChain::Role::Tail;
     use Moose::Role;
-    with 'MyCentipede::Role::Interface';
+    with 'MyChain::Role::Interface';
 
     # Body role - consuming classes must implement the interface, and also
     # have a tail attribute.
-    package MyCentipede::Role::Body;
+    package MyChain::Role::Body;
     use Moose::Role;
-    with 'MyCentipede::Role::Interface';
+    with 'MyChain::Role::Interface';
     has tail => (
         is       => 'ro',
-        does     => 'MyCentipede::Role::Interface',
+        does     => 'MyChain::Role::Interface',
         required => 1,
     );
 
     # Head class. This is just a convenience class which automatically wraps
     # the interface methods so they provide the $head parameter.
-    package MyCentipede::Head;
+    package MyChain::Head;
     use Moose;
     has body => (
         is          => 'ro',
-        does        => 'MyCentipede::Role::Interface',
+        does        => 'MyChain::Role::Interface',
         required    => 1,
         handles     => [qw( get set )],
     );

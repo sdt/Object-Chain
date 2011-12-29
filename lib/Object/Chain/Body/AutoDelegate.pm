@@ -1,4 +1,4 @@
-package MC::Body::AutoDelegate;
+package Object::Chain::Body::AutoDelegate;
 
 use strict;
 use warnings;
@@ -26,10 +26,10 @@ __END__
 
 =head1 SYNOPSIS
 
-    package MyCentipede::Body::MyBody;
-    use MC::Body::AutoDelegate qw( get ); # get delegates to $self->tail->get
-    use MyCentipede;
-    with MyCentipede::Role::Body;
+    package MyChain::Body::MyBody;
+    use Object::Chain::Body::AutoDelegate qw( get ); # auto-delegated to tail
+    use MyChain;
+    with 'MyChain::Role::Body';
 
     sub set {
         # ...
@@ -37,13 +37,13 @@ __END__
 
 =head1 DESCRIPTION
 
-Sometimes you only want to implement part of your centipede interface, and let
+Sometimes you only want to implement part of your chain's interface, and let
 the tail handle the rest.
 
 It would be nice to be able to do this:
 
-    package MyCentipede::MyBody;
-    with 'MyCentipede::Role::Body';
+    package MyChain::MyBody;
+    with 'MyChain::Role::Body';
     has '+tail' => (
         handles => 'get',
     );
@@ -54,9 +54,9 @@ can't be delegated to until the body role has been consumed.
 
 This module is a workaround. Instead, of the above, you do this:
 
-    package MyCentipede::MyBody;
-    use MC::Body::AutoDelegate qw( get );
-    use MyCentipede;
-    with 'MyCentipede::Role::Body';
+    package MyChain::MyBody;
+    use Object::Chain::Body::AutoDelegate qw( get );
+    use MyChain;
+    with 'MyChain::Role::Body';
 
 =cut
