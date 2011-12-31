@@ -12,7 +12,6 @@ sub import {
     for my $method_name (@_) {
         $caller->meta->add_method($method_name, sub {
                 my $self = shift;
-                # TODO: wantarray
                 return $self->tail->$method_name(@_);
             });
     }
